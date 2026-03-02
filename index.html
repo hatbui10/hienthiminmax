@@ -222,102 +222,97 @@ button:disabled {
 
 <body>
 
-<div class="container">
+
+  <div class="container">
 
   <h2>Kiểm Tra Chuỗi Số</h2>
-    <div id="resultBox">Đang tải...</div>
+  <div id="resultBox">Đang tải...</div>
 
-  
+  <!-- Ô hiển thị số -->
   <div id="boxes"></div>
 
+  <!-- Khu vực Copy -->
   <div id="copyColumn">
 
-  <!-- Copy 1 -->
-  <input 
-    type="text" 
-    id="copyBox1" 
-    readonly 
-    placeholder="copy 1"
-  >
+    <input
+      type="text"
+      id="copyBox1"
+      readonly
+      placeholder="Copy 1"
+    >
 
-  <!-- Copy 2 -->
-  <input 
-    type="text" 
-    id="copyBox2" 
-    readonly 
-    placeholder="copy 2"
-  >
+    <input
+      type="text"
+      id="copyBox2"
+      readonly
+      placeholder="Copy 2"
+    >
 
-  <!-- Textarea lưu danh sách -->
-  <textarea 
-    id="copyBoxTextarea" 
-    readonly 
-    placeholder="Danh sách >=5"
-  ></textarea>
-     
+    <textarea
+      id="copyBoxTextarea"
+      readonly
+      placeholder="Danh sách >= 5"
+    ></textarea>
+
     <button id="copyBtn" onclick="copyToClipboard()">
-    Copy
-  </button>
-    
-    
-    <!-- Textarea lưu toàn bộ số nhập -->
-<textarea 
-  id="inputHistoryTextarea" 
-  readonly 
-  placeholder="Lịch sử nhập"
-></textarea>
-    
-    
-    
-    
-    <!-- Textarea 3: lưu số < 5 -->
-<textarea 
-  id="copyBoxTextarea3" 
-  readonly 
-  placeholder="Danh sách < 5"
-></textarea>
-    
+      Copy
+    </button>
+
+    <textarea
+      id="inputHistoryTextarea"
+      readonly
+      placeholder="Lịch sử nhập"
+    ></textarea>
+
+    <textarea
+      id="copyBoxTextarea3"
+      readonly
+      placeholder="Danh sách < 5"
+    ></textarea>
+
     <button id="copyHistoryBtn" onclick="copyHistory()">
-  Copy 2
-</button>
-    
- <div class="buttonRow">
-  
+      Copy 2
+    </button>
 
-  <button onclick="exportTxt()">
-    Xuất TXT
-  </button>
-</div>
+    <div class="buttonRow">
+      <button onclick="exportTxt()">
+        Xuất TXT
+      </button>
+    </div>
 
-</div>  
-  
-  
-  
+  </div>
+
+  <!-- Điều khiển số ô -->
   <div id="control">
-   <h1> Số ô kiểm tra:</h1>
-    
-    <input 
-  type="tel"
-  id="boxCountInput"
-  inputmode="numeric"
-  pattern="[0-9]*"
-  min="1"
-  max="20"
-  value="3"
->
-    
-        <button onclick="applyBoxCount()">Tạo</button>
+    <h1>Số ô kiểm tra:</h1>
+
+    <input
+      type="tel"
+      id="boxCountInput"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      min="1"
+      max="20"
+      value="3"
+    >
+
+    <button onclick="applyBoxCount()">
+      Tạo
+    </button>
   </div>
 
 </div>
-
- 
-</div>
+  
+  
+  
+  
 
 <script>
 
-const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreia2cukdbcycwghryd444a7fw3sp5spp4frjyfda7jbdgrmx22rx6i";
 
+  const ipfsURL = "https://tomato-delicate-zebra-533.mypinata.cloud/ipfs/bafkreib6qqzyu5wq3xao5knmoii75amrrbiy2atwvsaq77abiqb35vjrwm";
+  
+  
 // ===== DATA =====
 let dataSet = new Set();
 let dataSet2 = new Set();
@@ -422,9 +417,12 @@ inputHistoryTextarea.scrollTop = inputHistoryTextarea.scrollHeight;
   updateDisplay();
   updateCopyBoxes();
 
-  if (currentDigits.length === CHECK_BOX_COUNT && dataSet.size) {
-    checkValue();
-  }
+  if (
+  currentDigits.length === CHECK_BOX_COUNT &&
+  (dataSet.size || dataSet2.size)
+) {
+  checkValue();
+}
 
   focusInputBox();
 }
@@ -572,25 +570,14 @@ function updateCopyBoxes() {
 
 
 fetch(ipfsURL)
-  .then(res => res.text())
-  .then(text => {
+  .then(res => res.json())
+  .then(data => {
 
-    const array = text
-      .trim()
-      .replace(/"/g, "")
-      .split(",")
-      .map(x => x.trim())
-      .filter(x => x !== "");
-
-    dataSet = new Set(array);
+    dataSet = new Set(data.data);
+    dataSet2 = new Set(data.data2);
 
     result.textContent = "Sẵn sàng";
-  })
-  .catch(err => {
-    result.textContent = "Lỗi tải";
   });
-
-createBoxes();
 
 
 function exportTxt() {
@@ -618,6 +605,9 @@ function exportTxt() {
   URL.revokeObjectURL(url);
 }
 
+
+
+
 function copyHistory() {
 
   const text = copyBoxTextarea3.value; // đổi sang textarea < 5
@@ -634,7 +624,7 @@ function copyHistory() {
     });
 
 }
-
+createBoxes();
 
 </script>
 
