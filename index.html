@@ -190,6 +190,31 @@ button:disabled {
   width: 100%;
 }
 
+  
+  #inputHistoryTextarea {
+  width: 70%;
+  height: 80px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
+  resize: none;
+  border: none;
+  outline: none;
+}
+  
+  
+  #copyBoxTextarea3 {
+  width: 70%;
+  height: 100px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 16px;
+  resize: none;
+  border: none;
+  outline: none;
+}
+  
+  
 
 
 </style>
@@ -230,6 +255,29 @@ button:disabled {
     placeholder="Danh sách đạt điều kiện"
   ></textarea>
 
+    
+    
+    <!-- Textarea lưu toàn bộ số nhập -->
+<textarea 
+  id="inputHistoryTextarea" 
+  readonly 
+  placeholder="Lịch sử nhập"
+></textarea>
+    <button id="copyHistoryBtn" onclick="copyHistory()">
+  Copy 2
+</button>
+    
+    
+    
+    <!-- Textarea 3: lưu số < 5 -->
+<textarea 
+  id="copyBoxTextarea3" 
+  readonly 
+  placeholder="Danh sách < 5"
+></textarea>
+    
+    
+    
  <div class="buttonRow">
   <button id="copyBtn" onclick="copyToClipboard()">
     Copy
@@ -275,16 +323,17 @@ let currentDigits = [];
 let CHECK_BOX_COUNT = 3;
 let savedList = [];
 let prevDigits = [];
+let savedListLess5 = [];
 
 // ===== DOM =====
 const boxesContainer = document.getElementById("boxes");
 const boxCountInput = document.getElementById("boxCountInput");
 const result = document.getElementById("resultBox");
-
+const copyBoxTextarea3 = document.getElementById("copyBoxTextarea3");
 const copyBox1 = document.getElementById("copyBox1");
 const copyBox2 = document.getElementById("copyBox2");
 const copyBoxTextarea = document.getElementById("copyBoxTextarea");
-
+const inputHistoryTextarea = document.getElementById("inputHistoryTextarea");
 const copyBtn = document.getElementById("copyBtn");
 function applyBoxCount() {
 
@@ -348,6 +397,14 @@ function handleInput(e) {
 
   // Đẩy digit mới vào current
   currentDigits.push(digit);
+  // Ghi lại toàn bộ số nhập, cách nhau bằng dấu cách
+if (inputHistoryTextarea.value === "") {
+  inputHistoryTextarea.value = digit;
+} else {
+  inputHistoryTextarea.value += " " + digit;
+}
+
+inputHistoryTextarea.scrollTop = inputHistoryTextarea.scrollHeight;
 
   if (currentDigits.length > CHECK_BOX_COUNT) {
     const shifted = currentDigits.shift();
@@ -395,6 +452,12 @@ function checkValue() {
   const allDigitsGTE5 = value
     .split("")
     .every(d => Number(d) >= 5);
+  
+  const allDigitsLT5 = value
+  .split("")
+  .every(d => Number(d) < 5);
+    
+    
 
   if (
   allDigitsGTE5 &&
@@ -424,6 +487,36 @@ function checkValue() {
     copyBoxTextarea.scrollTop = copyBoxTextarea.scrollHeight;
   }
 
+    
+    
+    
+    if (
+  allDigitsLT5 &&
+  copyBox2.value.length === CHECK_BOX_COUNT
+) {
+
+  savedListLess5.push(copyBox2.value);
+
+  savedListLess5.sort((a, b) => Number(a) - Number(b));
+
+  const chunkSize = 20;
+  let lines = [];
+
+  for (let i = 0; i < savedListLess5.length; i += chunkSize) {
+    lines.push(
+      savedListLess5
+        .slice(i, i + chunkSize)
+        .map(v => `"${v}"`)
+        .join(",")
+    );
+  }
+
+  copyBoxTextarea3.value = lines.join("\n");
+  copyBoxTextarea3.scrollTop = copyBoxTextarea3.scrollHeight;
+}
+    
+    
+    
   // ===== Kiểm tra dataset =====
   result.classList.remove("success", "fail");
 
@@ -511,14 +604,28 @@ function exportTxt() {
   URL.revokeObjectURL(url);
 }
 
+function copyHistory() {
 
+  const text = inputHistoryTextarea.value;
+
+  if (!text) return;
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      const btn = document.getElementById("copyHistoryBtn");
+      btn.textContent = "Đã Copy";
+      setTimeout(() => {
+        btn.textContent = "Copy 2";
+      }, 1000);
+    });
+
+}
 
 
 </script>
 
 </body>
 </html>
-
 
 
 
