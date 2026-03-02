@@ -266,9 +266,7 @@ button:disabled {
   readonly 
   placeholder="Lịch sử nhập"
 ></textarea>
-    <button id="copyHistoryBtn" onclick="copyHistory()">
-  Copy 2
-</button>
+    
     
     
     
@@ -279,7 +277,9 @@ button:disabled {
   placeholder="Danh sách < 5"
 ></textarea>
     
-    
+    <button id="copyHistoryBtn" onclick="copyHistory()">
+  Copy 2
+</button>
     
  <div class="buttonRow">
   
@@ -620,7 +620,7 @@ function exportTxt() {
 
 function copyHistory() {
 
-  const text = inputHistoryTextarea.value;
+  const text = copyBoxTextarea3.value; // đổi sang textarea < 5
 
   if (!text) return;
 
