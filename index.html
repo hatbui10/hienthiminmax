@@ -257,7 +257,7 @@ display:none;
 
         <br>
         <button id="downloadBtn">Tải PNG</button>
-		<button id="downloadSVG1()">Download SVG 1</button>
+		<button id="downloadSVG1">Download SVG 1</button>
 
         <hr style="margin:30px 0">
 
@@ -308,7 +308,7 @@ display:none;
         <br><br>
 
         <button id="downloadCircle">Tải ảnh PNG</button>
-		<button id="downloadSVG2()">Download SVG 2</button>
+		<button id="downloadSVG2">Download SVG 2</button>
 
     </div>
 
@@ -379,6 +379,13 @@ display:none;
 </div>
 <script>
 
+
+
+
+const frameWidth = document.getElementById("frameWidth")
+const frameHeight = document.getElementById("frameHeight")
+const frameType = document.getElementById("frameType")
+
 const applyFrame = document.getElementById("applyFrame")
 
 const clipCircleShape = document.getElementById("clipCircleShape")
@@ -429,9 +436,6 @@ clipRectShape.setAttribute("height",height)
 }
 
 
-const frameWidth = document.getElementById("frameWidth")
-const frameHeight = document.getElementById("frameHeight")
-const frameType = document.getElementById("frameType")
 
 let width = frameWidth.value
 let height = frameHeight.value
@@ -1144,19 +1148,27 @@ updateLogoImage()
 
 function drawAvatar(ctx, svgimg, x, y, size) {
 
-  ctx.drawImage(svgimg, x, y, size, size)
+  const tmp = document.createElement("canvas")
+  const tctx = tmp.getContext("2d")
 
-  const img = ctx.getImageData(x, y, size, size)
+  tmp.width = 2048
+  tmp.height = 2048
+
+  tctx.drawImage(svgimg,0,0,tmp.width,tmp.height)
+
+  ctx.drawImage(tmp,0,0,tmp.width,tmp.height,x,y,size,size)
+
+  const img = ctx.getImageData(x,y,size,size)
   const d = img.data
   const w = img.width
   const h = img.height
 
   const out = new Uint8ClampedArray(d)
 
-  for (let y1 = 1; y1 < h-1; y1++) {
-    for (let x1 = 1; x1 < w-1; x1++) {
+  for (let y1 = 1; y1 < h-1; y1++){
+    for (let x1 = 1; x1 < w-1; x1++){
 
-      for (let c = 0; c < 3; c++) {
+      for (let c = 0; c < 3; c++){
 
         let i = (y1*w + x1)*4 + c
 
@@ -1173,9 +1185,9 @@ function drawAvatar(ctx, svgimg, x, y, size) {
   }
 
   img.data.set(out)
-  ctx.putImageData(img, x, y)
-}
+  ctx.putImageData(img,x,y)
 
+}
 
 
 
