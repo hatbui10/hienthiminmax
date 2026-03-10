@@ -2,1198 +2,151 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>Logo vòng tròn</title>
+<title>Luật số</title>
 
 <style>
 
 body{
+background:#0f172a;
 font-family:Arial;
-background:#f4e2a3;
-margin:0;
-padding:20px;
-}
-
-.container{
+color:white;
 display:flex;
-gap:20px;
-align-items:flex-start;
 justify-content:center;
-flex-wrap:nowrap;
+margin-top:60px;
 }
 
-
-.tools{
-width:260px;
-padding:20px;
-border-radius:10px;
-margin: 10px auto;
-
-
-background:transparent;
-box-shadow:0 0 5px rgba(0,0,0,0.2);
-}
-
-
-
-.control{
-margin-bottom:12px;
-font-size:14px;
+.box{
+background:#1e293b;
+padding:25px;
+border-radius:12px;
+width:360px;
 }
 
 input{
-width:90%;
-padding:6px;
-margin-top:4px;
-}
-
-svg{
-width:500px;
-height:500px;
-background:#f4e2a3;
-border-radius:10px;
-box-shadow:0 0 8px rgba(0,0,0,0.3);
-}
-
-.preview{
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-
-
-button{
-padding:8px 14px;
-font-size:16px;
-cursor:pointer;
-margin-top:10px;
-}
-
-
-#circleImageSVG{
-cursor:grab;
-user-select:none;
-}
-
-
-#hexInput{
-margin-bottom:20px;
-width: 90%;
-}
-
-
-#dropBox{
-width: 80%;
-height:50px;
-border:2px dashed #999;
-display:flex;
-align-items:center;
-justify-content:center;
-margin-bottom:20px;
-font-family:sans-serif;
-display: none;
-}
-
-canvas{
-width : 60%;
-height: 40%;
-border:4px solid #333;
-cursor:crosshair;
-}
-
-
-.tools h3{
-width: 50%;
-background:linear-gradient(135deg,#444,#222);
-color:white;
+width:30%;
 padding:12px;
-cursor:pointer;
-margin-bottom:20px;
+font-size:22px;
 text-align:center;
-border-radius:8px;
-font-weight:bold;
-margin: 5px auto;
-letter-spacing:0.5px;
-
-box-shadow:0 3px 8px rgba(0,0,0,0.3);
-
-transition:all 0.25s ease;
+margin-bottom:10px;
+border-radius:6px;
+border:none;
 }
 
-/* hover sáng lên */
-.tools h3:hover{
-background:linear-gradient(135deg,#666,#333);
-box-shadow:0 5px 14px rgba(0,0,0,0.45);
-transform:translateY(-2px);
+#kq{
+font-size:17px;
+line-height:1.6;
+white-space:pre-line;
+margin-top:10px;
+color:#22c55e;
 }
-
-/* khi bấm */
-.tools h3:active{
-transform:scale(0.97);
-box-shadow:0 2px 6px rgba(0,0,0,0.4);
-}
-
-.tools.collapsed .control,
-.tools.collapsed input,
-.tools.collapsed #dropBox,
-.tools.collapsed canvas,
-.tools.collapsed p{
-display:none;
-}
-
 
 </style>
 </head>
+
 <body>
 
-<div class="container">
+<div class="box">
 
-    <!-- PANEL TRÁI : CHỈNH CHỮ -->
-    <div class="panel tools collapsed">
+<input 
+id="inputSo"
+maxlength="1"
+inputmode="numeric"
+pattern="[0-9]*"
+placeholder="Nhập số">
 
-        <h3>Chỉnh chữ</h3>
+<input id="copySo" readonly placeholder="Số đã copy">
 
-        <div class="control">
-            Chữ phía trên
-            <input id="topInput">
-        </div>
-
-        <div class="control">
-            Chữ phía dưới
-            <input id="bottomInput">
-        </div>
-
-        <div class="control">
-            Bán kính vòng tròn
-            <input type="range" id="radius" min="60" max="140" value="120">
-        </div>
-
-        <div class="control">
-            Vị trí chữ trên
-            <input type="range" id="topOffset" min="0" max="100" value="50">
-        </div>
-
-        <div class="control">
-            Vị trí chữ dưới
-            <input type="range" id="bottomOffset" min="0" max="100" value="50">
-        </div>
-
-        <div class="control">
-            Khoảng cách chữ trên
-            <input type="range" id="topGap" min="-30" max="40" value="10">
-        </div>
-
-        <div class="control">
-            Khoảng cách chữ dưới
-            <input type="range" id="bottomGap" min="-30" max="40" value="10">
-        </div>
-
-        <div class="control">
-            Kích thước chữ
-            <input type="range" id="fontSize" min="12" max="50" value="22">
-        </div>
-
-        <div class="control">
-            Khoảng cách ký tự chữ trên
-            <input type="range" id="topSpacing" min="0" max="15" value="4">
-        </div>
-
-        <div class="control">
-            Khoảng cách ký tự chữ dưới
-            <input type="range" id="bottomSpacing" min="0" max="15" value="4">
-        </div>
-
-    </div>
-
-
-    <!-- PREVIEW -->
-    <div class="preview">
-
-        <svg id="logoSVG"
-        viewBox="0 0 300 300"
-        width="300"
-        height="300"
-        preserveAspectRatio="xMidYMid meet">
-
-            <defs>
-                <path id="topCircle"></path>
-                <path id="bottomCircle"></path>
-
-                <clipPath id="imageClip">
-                    <circle id="clipCircle" cx="150" cy="150" r="60"></circle>
-                </clipPath>
-            </defs>
-
-            <image id="centerImage"
-                   x="90"
-                   y="90"
-                   width="120"
-                   height="120"
-                   clip-path="url(#imageClip)"
-                   preserveAspectRatio="xMidYMid slice">
-            </image>
-
-            <circle id="imageBorder"
-                    cx="150"
-                    cy="150"
-                    r="60"
-                    fill="none"
-                    stroke="black"
-                    stroke-width="3">
-            </circle>
-
-            <text id="topTextWrap" font-size="22" font-weight="bold">
-                <textPath id="topText" href="#topCircle" startOffset="50%" text-anchor="middle">
-                    CHỮ PHÍA TRÊN
-                </textPath>
-            </text>
-
-            <text id="bottomTextWrap" font-size="22" font-weight="bold">
-                <textPath id="bottomText" href="#bottomCircle" startOffset="50%" text-anchor="middle">
-                    CHỮ PHÍA DƯỚI
-                </textPath>
-            </text>
-
-        </svg>
-
-        <br>
-        <button id="downloadBtn">Tải PNG</button>
-		<button id="downloadSVG1">Download SVG 1</button>
-
-        <hr style="margin:30px 0">
-
-        <h3>Bo tròn ảnh riêng</h3>
-
-        <svg id="circleImageSVG"
-        viewBox="0 0 300 300"
-        width="300"
-        height="300"
-        preserveAspectRatio="xMidYMid meet">
-
-            <defs>
-                <clipPath id="circleClip">
-
-                <circle id="clipCircleShape" cx="150" cy="150" r="120"></circle>
-
-                <rect id="clipRectShape"
-                x="30"
-                y="30"
-                width="240"
-                height="240"
-                style="display:none"></rect>
-
-</clipPath>
-            </defs>
-
-            <image id="circleImage"
-                   x="30"
-                   y="30"
-                   width="240"
-                   height="240"
-                   clip-path="url(#circleClip)"
-                   preserveAspectRatio="xMidYMid slice">
-            </image>
-
-        </svg>
-
-        <br>
-
-        <input type="file" id="circleUpload">
-
-        <br>
-
-        Kích thước vòng tròn
-
-        <input type="range" id="circleSize" min="60" max="140" value="120">
-
-        <br><br>
-
-        <button id="downloadCircle">Tải ảnh PNG</button>
-		<button id="downloadSVG2">Download SVG 2</button>
-
-    </div>
-
-
-    <!-- PANEL PHẢI : CHỈNH ẢNH -->
-    <div class="panel tools collapsed">
-
-        <h3>Chỉnh ảnh</h3>
-
-        <div class="control">
-            Thêm ảnh
-            <input type="file" id="imageUpload">
-        </div>
-
-        <div class="control">
-            Kích thước khung ảnh
-            <input type="range" id="imgSize" min="30" max="120" value="60">
-        </div>
-
-        <div class="control">
-            Độ dày viền
-            <input type="range" id="borderSize" min="1" max="10" value="3">
-        </div>
-
-        <div class="control">
-            HEX
-            <input type="text" id="hexInput">
-        </div>
-
-        <div id="dropBox">Dán ảnh vào đây (Ctrl + V)</div>
-
-        <canvas id="canvas"></canvas>
-
-        <p id="colorInfo"></p>
-
-        <div class="control">
-            Màu chữ
-            <input type="color" id="textColor" value="#000000">
-        </div>
-
-        <div class="control">
-            Màu viền
-            <input type="color" id="borderColor" value="#000000">
-        </div>
-
-        <div class="control">
-            Màu nền
-            <input type="color" id="bgColor" value="#e6d39c">
-        </div>
-		
-		<div class="control">
-		Chiều rộng
-		<input type="number" id="frameWidth" value="2048">
-		Chiều cao
-        <input type="number" id="frameHeight" value="2048">
-                   <select id="frameType">
-                     <option value="rect">Rectangle</option>
-                     <option value="square">Square</option>
-                     <option value="circle">Circle</option>
-                   </select>
-				   
-				   <button id="applyFrame">Áp dụng khung</button>
-        </div>
-		
-		
-    </div>
+<div id="kq"></div>
 
 </div>
+
 <script>
 
+let input=document.getElementById("inputSo");
+let copy=document.getElementById("copySo");
 
-
-
-const frameWidth = document.getElementById("frameWidth")
-const frameHeight = document.getElementById("frameHeight")
-const frameType = document.getElementById("frameType")
-
-const applyFrame = document.getElementById("applyFrame")
-
-const clipCircleShape = document.getElementById("clipCircleShape")
-const clipRectShape = document.getElementById("clipRectShape")
-
-applyFrame.onclick = function(){
-
-let width = frameWidth.value
-let height = frameHeight.value
-let type = frameType.value
-
-
-
-if(type === "circle"){
-
-clipCircleShape.style.display="block"
-clipRectShape.style.display="none"
-
-clipCircleShape.setAttribute("r", 120)
-
-clipCircleShape.setAttribute("cx", 150)
-clipCircleShape.setAttribute("cy", 150)
-
+window.onload=()=>{
+input.focus();
 }
 
+input.addEventListener("input",function(){
 
+let v=input.value;
 
-if(type === "square"){
-
-clipCircleShape.style.display="none"
-clipRectShape.style.display="block"
-
-clipRectShape.setAttribute("width",width)
-clipRectShape.setAttribute("height",width)
-
+if(!/^[0-9]$/.test(v)){
+input.value="";
+return;
 }
 
-if(type === "rect"){
+copy.value=v;
 
-clipCircleShape.style.display="none"
-clipRectShape.style.display="block"
+navigator.clipboard.writeText(v);
 
-clipRectShape.setAttribute("width",width)
-clipRectShape.setAttribute("height",height)
+hienLuat(Number(v));
 
+setTimeout(()=>{
+input.value="";
+input.focus();
+},50);
+
+});
+
+function hienLuat(n){
+
+let text="";
+
+if(n==0){
+text=`Sau 0 mà là >7 đánh lớn
+Trước 0 mà <5 đánh lớn
+Trước 0 có 2 cái >5 đánh lớn`;
 }
 
+else if(n==1){
+text=`Gặp 1 là đánh lớn. True`;
 }
 
-
-
-let width = frameWidth.value
-let height = frameHeight.value
-let type = frameType.value
-
-
-
-document.querySelectorAll(".tools h3").forEach(title=>{
-
-title.onclick=function(){
-
-this.parentElement.classList.toggle("collapsed")
-
+else if(n==2){
+text=`Trước 2 mà >5 đánh nhỏ , <5 đánh lớn True`;
 }
 
-})
-
-// tìm RBG 
-
-const dropBox = document.getElementById("dropBox")
-const canvas = document.getElementById("canvas")
-const ctx = canvas.getContext("2d")
-const colorInfo = document.getElementById("colorInfo")
-
-let img = new Image()
-
-
-//vẽ khung bên dưới
-function drawFrame(){
-
-let width = frameWidth.value
-let height = frameHeight.value
-let type = frameType.value
-
-ctx.clearRect(0,0,canvas.width,canvas.height)
-
-if(type === "rect"){
-ctx.strokeRect(20,20,width,height)
+else if(n==3){
+text=`Trước số 3 có 2 cái >5 đánh nhỏ. True`;
 }
 
-if(type === "square"){
-ctx.strokeRect(20,20,width,width)
+else if(n==4){
+text=`Trước 4 có 2 cái <5 đánh lớn, còn lại đánh nhỏ. True`;
 }
 
-if(type === "circle"){
-ctx.beginPath()
-ctx.arc(canvas.width/2,canvas.height/2,width/2,0,Math.PI*2)
-ctx.stroke()
+else if(n==5){
+text=`Gặp 5 đánh lớn. True`;
 }
 
+else if(n==6){
+text=`Trước 6 mà >5 đánh lớn True
+Trước 6 có 2 cái <5 đánh lớn`;
 }
 
-// sự kiện input
-frameWidth.addEventListener("input",drawFrame)
-frameHeight.addEventListener("input",drawFrame)
-frameType.addEventListener("change",drawFrame)
-
-// CTRL + V
-document.addEventListener("paste", function(e){
-
-const items = e.clipboardData.items
-
-for(let item of items){
-
-if(item.type.indexOf("image") !== -1){
-
-const file = item.getAsFile()
-const reader = new FileReader()
-
-reader.onload = function(event){
-img.src = event.target.result
+else if(n==7){
+text=`3 số liên tiếp đều >7 thì đánh lớn`;
 }
 
-reader.readAsDataURL(file)
-
+else if(n==8){
+text=`Trước 8 có 2 số giống nhau <5 đánh lớn
+>5 đánh nhỏ
+Trước 8 có 3 cái nhỏ thì đánh lớn
+Trước 8 mà 1 lớn 1 nhỏ thì đánh nhỏ`;
 }
 
+else if(n==9){
+text=`Trước 9 có 2 cái <5 đánh lớn True
+Trước 9 mà 1 lớn 1 nhỏ thì đánh lớn`;
 }
 
-})
-
-img.onload = function(){
-
-canvas.width = img.width
-canvas.height = img.height
-
-ctx.drawImage(img,0,0)
-
-// LẤY MÀU PIXEL Ở GIỮA ẢNH
-const x = Math.floor(canvas.width/2)
-const y = Math.floor(canvas.height/2)
-
-const pixel = ctx.getImageData(x,y,1,1).data
-
-const r = pixel[0]
-const g = pixel[1]
-const b = pixel[2]
-
-const hex = "#" + ((1<<24)+(r<<16)+(g<<8)+b).toString(16).slice(1)
-
-colorInfo.innerText = "RGB: "+r+", "+g+", "+b+" | HEX: "+hex
+document.getElementById("kq").innerText=text;
 
 }
-
-
-
-
-
-// ĐỔI HEX SANG RBG
-
-const textColor = document.getElementById("textColor")
-const borderColor = document.getElementById("borderColor")
-const bgColor = document.getElementById("bgColor")
-const hexInput = document.getElementById("hexInput")
-
-let currentPicker = null
-
-function setCurrent(picker){
-currentPicker = picker
-hexInput.value = picker.value
-}
-
-textColor.addEventListener("input",()=> setCurrent(textColor))
-borderColor.addEventListener("input",()=> setCurrent(borderColor))
-bgColor.addEventListener("input",()=> setCurrent(bgColor))
-
-hexInput.addEventListener("input",function(){
-
-if(currentPicker && hexInput.value.length == 7){
-currentPicker.value = hexInput.value
-}
-
-})
-
-
-
-// ===============================
-// LẤY CÁC INPUT CHỈNH CHỮ
-// ===============================
-
-const topInput=document.getElementById("topInput")
-const bottomInput=document.getElementById("bottomInput")
-
-const topText=document.getElementById("topText")
-const bottomText=document.getElementById("bottomText")
-
-const topWrap=document.getElementById("topTextWrap")
-const bottomWrap=document.getElementById("bottomTextWrap")
-
-// ===============================
-// SLIDER ĐIỀU CHỈNH HÌNH TRÒN CHỮ
-// ===============================
-
-const radiusSlider=document.getElementById("radius")
-const topOffsetSlider=document.getElementById("topOffset")
-const bottomOffsetSlider=document.getElementById("bottomOffset")
-
-const topGapSlider=document.getElementById("topGap")
-const bottomGapSlider=document.getElementById("bottomGap")
-
-// ===============================
-// SLIDER CHỈNH FONT
-// ===============================
-
-const fontSizeSlider=document.getElementById("fontSize")
-
-const topSpacingSlider=document.getElementById("topSpacing")
-const bottomSpacingSlider=document.getElementById("bottomSpacing")
-
-// ===============================
-// SLIDER CHỈNH KHUNG ẢNH
-// ===============================
-
-const imgSizeSlider=document.getElementById("imgSize")
-const borderSizeSlider=document.getElementById("borderSize")
-
-// ===============================
-// MÀU CHỮ + MÀU VIỀN
-// ===============================
-
-
-// ===============================
-// PATH CHỮ TRÊN VÀ CHỮ DƯỚI
-// ===============================
-
-const topCircle=document.getElementById("topCircle")
-const bottomCircle=document.getElementById("bottomCircle")
-
-// ===============================
-// ẢNH LOGO TRUNG TÂM
-// ===============================
-
-const imageUpload=document.getElementById("imageUpload")
-const centerImage=document.getElementById("centerImage")
-
-// ===============================
-// KHUNG CẮT ẢNH TRÒN
-// ===============================
-
-const clipCircle=document.getElementById("clipCircle")
-const imageBorder=document.getElementById("imageBorder")
-
-// ===============================
-// MÀU NỀN LOGO
-// ===============================
-
-
-
-// ===============================
-// BIẾN CHO ZOOM + KÉO ẢNH KHUNG LOGO
-// ===============================
-
-let logoScale = 1
-let logoX = 90
-let logoY = 90
-
-let logoDragging = false
-let logoStartX
-let logoStartY
-
-
-// ===============================
-// TẠO ĐƯỜNG TRÒN CHO CHỮ TRÊN + DƯỚI
-// ===============================
-
-function updateCircle(){
-
-let r=parseInt(radiusSlider.value)
-let topGap=parseInt(topGapSlider.value)
-let bottomGap=parseInt(bottomGapSlider.value)
-
-topCircle.setAttribute(
-"d",
-`M150,150 m-${r+topGap},0 a${r+topGap},${r+topGap} 0 1,1 ${(r+topGap)*2},0`
-)
-
-bottomCircle.setAttribute(
-"d",
-`M150,150 m-${r+bottomGap},0 a${r+bottomGap},${r+bottomGap} 0 1,0 ${(r+bottomGap)*2},0`
-)
-
-}
-
-
-// ===============================
-// CẬP NHẬT FONT SIZE + KHOẢNG CÁCH CHỮ
-// ===============================
-
-function updateFont(){
-
-let size=fontSizeSlider.value
-
-topWrap.setAttribute("font-size",size)
-bottomWrap.setAttribute("font-size",size)
-
-topWrap.setAttribute("letter-spacing",topSpacingSlider.value)
-bottomWrap.setAttribute("letter-spacing",bottomSpacingSlider.value)
-
-}
-
-
-// ===============================
-// THAY ĐỔI KÍCH THƯỚC KHUNG ẢNH TRÒN
-// ===============================
-
-function updateImageSize(){
-
-let size=imgSizeSlider.value
-
-clipCircle.setAttribute("r",size)
-imageBorder.setAttribute("r",size)
-
-updateLogoImage()
-
-}
-
-
-// ===============================
-// CẬP NHẬT ẢNH LOGO KHI ZOOM / KÉO
-// ===============================
-
-function updateLogoImage(){
-
-let size = imgSizeSlider.value
-
-centerImage.setAttribute("x",logoX)
-centerImage.setAttribute("y",logoY)
-
-centerImage.setAttribute("width",size*2*logoScale)
-centerImage.setAttribute("height",size*2*logoScale)
-
-}
-
-
-// ===============================
-// ĐỘ DÀY VIỀN ẢNH
-// ===============================
-
-function updateBorder(){
-imageBorder.setAttribute("stroke-width",borderSizeSlider.value)
-}
-
-
-// ===============================
-// ĐỔI MÀU CHỮ + MÀU VIỀN
-// ===============================
-
-function updateColor(){
-
-topWrap.setAttribute("fill",textColor.value)
-bottomWrap.setAttribute("fill",textColor.value)
-
-imageBorder.setAttribute("stroke",borderColor.value)
-
-}
-
-
-// ===============================
-// SỰ KIỆN NHẬP CHỮ
-// ===============================
-
-topInput.addEventListener("input",()=>topText.textContent=topInput.value)
-bottomInput.addEventListener("input",()=>bottomText.textContent=bottomInput.value)
-
-
-// ===============================
-// THAY ĐỔI VỊ TRÍ CHỮ TRÊN / DƯỚI
-// ===============================
-
-topOffsetSlider.addEventListener("input",()=>topText.setAttribute("startOffset",topOffsetSlider.value+"%"))
-bottomOffsetSlider.addEventListener("input",()=>bottomText.setAttribute("startOffset",bottomOffsetSlider.value+"%"))
-
-
-// ===============================
-// SỰ KIỆN SLIDER
-// ===============================
-
-radiusSlider.addEventListener("input",updateCircle)
-topGapSlider.addEventListener("input",updateCircle)
-bottomGapSlider.addEventListener("input",updateCircle)
-
-fontSizeSlider.addEventListener("input",updateFont)
-topSpacingSlider.addEventListener("input",updateFont)
-bottomSpacingSlider.addEventListener("input",updateFont)
-
-imgSizeSlider.addEventListener("input",()=>{
-updateImageSize()
-updateLogoImage()
-})
-
-
-
-
-
-borderSizeSlider.addEventListener("input",updateBorder)
-
-textColor.addEventListener("input",updateColor)
-borderColor.addEventListener("input",updateColor)
-
-
-// ===============================
-// UPLOAD ẢNH LOGO TRUNG TÂM
-// ===============================
-
-imageUpload.addEventListener("change",function(){
-
-const file=this.files[0]
-if(!file) return
-
-const reader=new FileReader()
-
-reader.onload=function(e){
-
-centerImage.setAttribute("href",e.target.result)
-
-logoScale = 1
-logoX = 150 - imgSizeSlider.value
-logoY = 150 - imgSizeSlider.value
-
-updateLogoImage()
-
-}
-
-reader.readAsDataURL(file)
-
-})
-
-
-// ===============================
-// XUẤT PNG LOGO
-// ===============================
-
-
-
-document.getElementById("downloadBtn").onclick=function(){
-
-let svg=document.getElementById("logoSVG")
-let data=new XMLSerializer().serializeToString(svg)
-
-let canvas=document.createElement("canvas")
-
-canvas.width = frameWidth.value
-canvas.height = frameHeight.value
-
-let ctx=canvas.getContext("2d")
-
-ctx.fillStyle = bgColor.value
-ctx.fillRect(0,0,canvas.width,canvas.height)
-
-let svgimg=new Image()
-
-svgimg.onload=function(){
-
-let cx = canvas.width / 2
-let cy = canvas.height / 2
-let r = Math.min(canvas.width,canvas.height) / 2
-
-ctx.beginPath()
-ctx.arc(cx,cy,r,0,Math.PI*2)
-ctx.closePath()
-ctx.clip()
-
-let size = Math.min(canvas.width, canvas.height)
-
-let x = (canvas.width - size) / 2
-let y = (canvas.height - size) / 2
-
-
-
-ctx.imageSmoothingEnabled = true
-ctx.imageSmoothingQuality = "high"
-
-drawAvatar(ctx, svgimg, x, y, size)
-
-
-
-
-let a=document.createElement("a")
-a.download="logo.png"
-a.href=canvas.toDataURL("image/png")
-a.click()
-
-}
-
-svgimg.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(data)
-
-}
-
-
-
-
-// ===============================
-// KHUNG ẢNH BÊN DƯỚI
-// ===============================
-
-const circleUpload = document.getElementById("circleUpload")
-const circleImage = document.getElementById("circleImage")
-const circleSizeSlider = document.getElementById("circleSize")
-const circleClipShape = document.getElementById("clipCircleShape")
-
-let circleScale = 1
-let circleX = 30
-let circleY = 30
-
-let startX,startY
-let circleDragging = false
-
-
-// ===============================
-// UPLOAD ẢNH KHUNG DƯỚI
-// ===============================
-
-circleUpload.addEventListener("change", function(){
-
-const file = this.files[0]
-if(!file) return
-
-const reader = new FileReader()
-
-reader.onload = function(e){
-
-circleImage.setAttribute("href", e.target.result)
-
-circleImage.setAttribute("x", circleX)
-circleImage.setAttribute("y", circleY)
-
-circleImage.setAttribute("width", 240 * circleScale)
-circleImage.setAttribute("height", 240 * circleScale)
-
-}
-
-reader.readAsDataURL(file)
-
-})
-
-
-// ===============================
-// ZOOM + KÉO ẢNH KHUNG DƯỚI
-// ===============================
-
-const circleSVG = document.getElementById("circleImageSVG")
-
-circleSVG.addEventListener("wheel",function(e){
-
-e.preventDefault()
-
-let delta = e.deltaY>0 ? -0.05 : 0.05
-
-circleScale += delta
-
-if(circleScale<0.2) circleScale=0.2
-if(circleScale>5) circleScale=5
-
-updateCircleImage()
-
-})
-
-circleSVG.addEventListener("mousedown",function(e){
-
-circleDragging = true
-
-startX = e.clientX - circleX
-startY = e.clientY - circleY
-
-circleSVG.style.cursor="grabbing"
-
-})
-
-window.addEventListener("mouseup",function(){
-
-circleDragging = false
-circleSVG.style.cursor="grab"
-
-})
-
-
-window.addEventListener("mousemove",function(e){
-
-if(!circleDragging) return
-
-circleX = e.clientX - startX
-circleY = e.clientY - startY
-
-updateCircleImage()
-
-})
-
-
-// ===============================
-// CẬP NHẬT ẢNH KHUNG DƯỚI
-// ===============================
-
-function updateCircleImage(){
-
-circleImage.setAttribute("x", circleX)
-circleImage.setAttribute("y", circleY)
-
-circleImage.setAttribute("width", 240 * circleScale)
-circleImage.setAttribute("height", 240 * circleScale)
-
-}
-
-
-// ===============================
-// SLIDER THAY ĐỔI BÁN KÍNH KHUNG DƯỚI
-// ===============================
-
-circleSizeSlider.addEventListener("input",function(){
-
-let r=this.value
-
-circleClipShape.setAttribute("r",r)
-
-})
-
-
-// ===============================
-// XUẤT PNG ẢNH TRÒN KHUNG DƯỚI
-// ===============================
-
-document.getElementById("downloadCircle").onclick = downloadCirclePNG
-
-function downloadCirclePNG(){
-
-const svg = document.getElementById("circleImageSVG")
-
-const serializer = new XMLSerializer()
-const source = serializer.serializeToString(svg)
-
-const img = new Image()
-img.crossOrigin="anonymous"
-
-const canvas = document.createElement("canvas")
-
-canvas.width = frameWidth.value
-canvas.height = frameHeight.value
-
-const ctx = canvas.getContext("2d")
-
-img.onload = function(){
-
-let cx = canvas.width / 2
-let cy = canvas.height / 2
-let r = Math.min(canvas.width,canvas.height) / 2
-
-ctx.beginPath()
-ctx.arc(cx,cy,r,0,Math.PI*2)
-ctx.closePath()
-ctx.clip()
-
-let size = Math.min(canvas.width, canvas.height)
-
-let x = (canvas.width - size) / 2
-let y = (canvas.height - size) / 2
-
-
-ctx.imageSmoothingEnabled = true
-ctx.imageSmoothingQuality = "high"
-
-drawAvatar(ctx, img, x, y, size)
-
-const link = document.createElement("a")
-link.download = "circle.png"
-link.href = canvas.toDataURL("image/png")
-
-link.click()
-
-}
-
-img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source)
-
-}
-
-
-// ===============================
-// KHỞI TẠO BAN ĐẦU
-// ===============================
-
-updateCircle()
-updateImageSize()
-updateBorder()
-updateFont()
-updateColor()
-drawFrame()
-
-// đổi màu nền logo
-
-bgColor.addEventListener("input",function(){
-
-document.getElementById("logoSVG").style.background = bgColor.value
-
-})
-
-
-// ===============================
-// ZOOM + KÉO ẢNH KHUNG LOGO
-// ===============================
-
-const logoSVG = document.getElementById("logoSVG")
-
-logoSVG.addEventListener("wheel",function(e){
-
-e.preventDefault()
-
-let delta = e.deltaY>0 ? -0.05 : 0.05
-
-logoScale += delta
-
-if(logoScale<0.2) logoScale=0.2
-if(logoScale>5) logoScale=5
-
-updateLogoImage()
-
-})
-
-logoSVG.addEventListener("mousedown",function(e){
-
-logoDragging = true
-
-logoStartX = e.clientX - logoX
-logoStartY = e.clientY - logoY
-
-logoSVG.style.cursor="grabbing"
-
-})
-
-window.addEventListener("mouseup",function(){
-
-logoDragging = false
-logoSVG.style.cursor="grab"
-
-})
-
-window.addEventListener("mousemove",function(e){
-
-if(!logoDragging) return
-
-logoX = e.clientX - logoStartX
-logoY = e.clientY - logoStartY
-
-updateLogoImage()
-
-})
-
-
-
-
-
-
-
-function drawAvatar(ctx, svgimg, x, y, size) {
-
-  const tmp = document.createElement("canvas")
-  const tctx = tmp.getContext("2d")
-
-  tmp.width = 2048
-  tmp.height = 2048
-
-  tctx.drawImage(svgimg,0,0,tmp.width,tmp.height)
-
-  ctx.drawImage(tmp,0,0,tmp.width,tmp.height,x,y,size,size)
-
-  const img = ctx.getImageData(x,y,size,size)
-  const d = img.data
-  const w = img.width
-  const h = img.height
-
-  const out = new Uint8ClampedArray(d)
-
-  for (let y1 = 1; y1 < h-1; y1++){
-    for (let x1 = 1; x1 < w-1; x1++){
-
-      for (let c = 0; c < 3; c++){
-
-        let i = (y1*w + x1)*4 + c
-
-        let sum =
-          d[((y1-1)*w + x1)*4 + c] * -1 +
-          d[(y1*w + (x1-1))*4 + c] * -1 +
-          d[(y1*w + x1)*4 + c] * 5 +
-          d[(y1*w + (x1+1))*4 + c] * -1 +
-          d[((y1+1)*w + x1)*4 + c] * -1
-
-        out[i] = Math.min(255,Math.max(0,sum))
-      }
-    }
-  }
-
-  img.data.set(out)
-  ctx.putImageData(img,x,y)
-
-}
-
-
-
-
 
 </script>
+
 </body>
 </html>
-
