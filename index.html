@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<title>ABC Logic</title>
+<title>ABCD Logic</title>
 
 <style>
 body{
@@ -11,26 +10,58 @@ background:#0f172a;
 font-family:Arial;
 display:flex;
 justify-content:center;
-align-content:flex-start;
 margin-top:80px;
-color:white;
+color:white
 }
 
-.panel{background:#1e293b;padding:25px;border-radius:12px}
+.panel{
+background:#1e293b;
+padding:25px;
+border-radius:12px
+}
 
-.row{display:flex;gap:15px}
+.row{
+display:flex;
+gap:15px
+}
 
-.box{display:flex;flex-direction:column;align-items:center}
+.box{
+display:flex;
+flex-direction:column;
+align-items:center
+}
 
-label{margin-bottom:6px;font-weight:bold}
+label{
+margin-bottom:6px;
+font-weight:bold
+}
 
 input{
-width:70px;height:70px;font-size:26px;text-align:center;
-border:none;border-radius:8px
+width:70px;
+height:70px;
+font-size:26px;
+text-align:center;
+border:none;
+border-radius:8px
 }
 
 .result{
-margin-top:25px;font-size:40px;font-weight:bold;text-align:center;color:#22c55e
+margin-top:25px;
+font-size:40px;
+font-weight:bold;
+text-align:center;
+color:#22c55e
+}
+
+.inputBox{
+margin-top:20px;
+text-align:center
+}
+
+.inputBox input{
+width:120px;
+height:60px;
+font-size:28px
 }
 </style>
 </head>
@@ -43,10 +74,11 @@ margin-top:25px;font-size:40px;font-weight:bold;text-align:center;color:#22c55e
 <div class="box"><label>A</label><input id="A" readonly></div>
 <div class="box"><label>B</label><input id="B" readonly></div>
 <div class="box"><label>C</label><input id="C" readonly></div>
-<div class="box">
-<label>D</label>
-<input id="D" type="tel" inputmode="numeric" pattern="[0-9]*">
+<div class="box"><label>D</label><input id="D" readonly></div>
 </div>
+
+<div class="inputBox">
+<input id="INPUT" type="tel" inputmode="numeric" placeholder="Nhập số">
 </div>
 
 <div id="result" class="result">WAIT</div>
@@ -59,35 +91,39 @@ const A=document.getElementById("A")
 const B=document.getElementById("B")
 const C=document.getElementById("C")
 const D=document.getElementById("D")
+const INPUT=document.getElementById("INPUT")
 const result=document.getElementById("result")
 
-window.onload=()=>D.focus()
+window.onload=()=>INPUT.focus()
 
-D.addEventListener("input",()=>{
+INPUT.addEventListener("input",()=>{
 
-let v=parseInt(D.value)
+let v=parseInt(INPUT.value)
 if(isNaN(v)) return
 
+// dịch chuyển 4 số
 A.value=B.value
 B.value=C.value
-C.value=v
+C.value=D.value
+D.value=v
 
-D.value=""
-D.focus()
+INPUT.value=""
+INPUT.focus()
 
 let a=parseInt(A.value)
 let b=parseInt(B.value)
 let c=parseInt(C.value)
+let d=parseInt(D.value)
 
-if(!isNaN(a)&&!isNaN(b)&&!isNaN(c)){
-result.textContent=logic(a,b,c)
+if(!isNaN(a)&&!isNaN(b)&&!isNaN(c)&&!isNaN(d)){
+result.textContent=logic(a,b,c,d)
 }
 
 })
 
-function logic(a,b,c){
+function logic(a,b,c,d){
 
-switch(c){
+switch(d){
 ////////////////////////////////////////////////////////////////
 case 0:
 
@@ -95,16 +131,16 @@ case 0:
 if(a==0 && b==0 && c==0) return 0
 
 // trước 0 có 2 số <5
-if(a<5 && b<5) return 0
+if(c<5 && b<5) return 0
 
 // trước 0 có 2 số >5
-if(a>5 && b>5) return 1
+if(c>5 && b>5) return 1
 
 // trước 0 có 1 số <5
-if( b<5) return 1
+if( c<5) return 1
 
 // sau 0 mà >7
-if(c>7) return 1
+if(c=0 && d>7) return 1
 
 // còn lại
 return 0
@@ -114,14 +150,17 @@ case 1: return 1
 ////////////////////////////////////////////////////////////////
 case 2:
 
-// có 2 số <5
-if(a<5 && b<5) return 0
+// 2 số >5
+if(c > 5) return 0
 
-// có 2 số >5
-if(a>5 && b>5) return 0
+// 2 số <5
+if(c < 5) return 1
 
-// một lớn một nhỏ
-return 1
+// 1 lớn 1 nhỏ
+if((a < 5 && b < 5)) return 0
+
+// còn lại
+return "BỎ QUA"
 
 ////////////////////////////////////////////////////////////////
 case 3:
@@ -130,7 +169,7 @@ case 3:
 if(b==3 && c==3) return 0
 
 // trước số 3 có 2 số <5
-if(a<5 && b<5) return 1
+if(c<5 && b<5) return 1
 
 // còn lại
 return 0
@@ -151,65 +190,68 @@ case 5: return 1
 
 case 6:
 
-// hai số đều >5
-if(a > 5 && b > 5) return 1
+// 2 số >5
+if( c > 5) return 1
 
-// hai số đều <5
+// 2 số <5
 if(a < 5 && b < 5) return 1
 
-// một lớn một nhỏ
-return 0
+// 1 lớn 1 nhỏ
+if((a > 5 && b < 5) || (a < 5 && b > 5)) return 0
+
+// còn lại
+return "BỎ QUA"
 
 ////////////////////////////////////////////////////////////////
 case 7:
 
 // 3 số liên tiếp đều >7
-if(a > 7 && b > 7) return 1
+if(a > 7 && b > 7&& c > 7) return 1
 
 // trước 7 có 2 số <5
 if(a < 5 && b < 5) return 0
 
-// còn lại
-return 0
+// ngoài các trường hợp trên
+return "BỎ QUA"
 
 ////////////////////////////////////////////////////////////////
 case 8:
 
 // trước đó là 000
-if(a==0 && b==0) return 1
+if(a == 0 && b == 0 &&  c== 0) return 1
 
 // hai số giống nhau
-if(a==b){
-    if(a<5) return 1
-    if(a>5) return 0
+if(a == b){
+    if(a < 5) return 1
+    if(a > 5) return 0
 }
 
-// một số lớn một số nhỏ
-if((a>5 && b<5) || (a<5 && b>5)) return 0
+// một số >5 và một số <5
+if((a > 5 && b < 5) || (a < 5 && b > 5)) return 0
 
-// còn lại
-return 0
+// ngoài các trường hợp trên
+return "BỎ QUA"
 
 ////////////////////////////////////////////////////////////////
 case 9:
 
-// có ít nhất một số <5
-if(a < 5 || b < 5) return 1
+// 2 số <5
+if(a < 5 && b < 5) return 1
 
-// còn lại
-return 0
+// 1 số <5 và 1 số >5
+if((a < 5 && b > 5) || (a > 5 && b < 5)) return 1
 
+// ngoài 2 trường hợp trên
+return "BỎ QUA"
 ////////////////////////////////////////////////////////////////
 
 }
 
 return 0
 }
+
 
 </script>
 
 </body>
 </html>
-
-
-
