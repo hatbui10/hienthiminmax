@@ -3,74 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giao Diện Tràn Viền</title>
+    <title>Auto Copy</title>
     <style>
-        /* 1. Xóa bỏ mọi khoảng trống mặc định của trình duyệt */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            background-color: #f0f2f5;
-            display: flex;
-            justify-content: center;
-        }
-
-        /* 2. Cấu hình khung Card tràn gần hết màn hình điện thoại */
-        .card {
-            background: white;
-            width: 96%; /* Chiếm 96% chiều rộng màn hình, chỉ chừa lề rất nhỏ */
-            max-width: 500px; /* Giới hạn tối đa khi xem trên máy tính */
-            margin-top: 15px;
-            padding: 20px 15px; /* Đệm bên trong vừa phải */
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            box-sizing: border-box; /* Quan trọng: để padding không làm tăng chiều rộng */
-        }
-
-        h2 { margin-top: 0; color: #333; font-size: 1.4rem; }
-
-        /* 3. Ô nhập liệu khổng lồ, cân đối với khung */
-        #numInput {
-            width: 30%; /* Tràn hết chiều rộng bên trong Card */
-            max-width: 250px; /* Nhưng không quá dài để giữ dáng vuông/chữ nhật */
-            height: 70px;
-            font-size: 3rem;
-            font-weight: bold;
+        /* Tối ưu tràn viền, bỏ bớt khoảng trắng dư thừa */
+        html, body { margin: 0; padding: 0; width: 100%; background-color: #f0f2f5; display: flex; justify-content: center; }
+        
+        .card { 
+            background: white; 
+            width: 98%; /* Tràn gần hết màn hình điện thoại */
+            max-width: 450px; 
+            margin-top: 10px; 
+            padding: 20px 10px; 
+            border-radius: 12px; 
+            box-sizing: border-box; 
             text-align: center;
-            border: 4px solid #007bff;
-            border-radius: 12px;
-            outline: none;
-            display: block;
-            margin: 0 auto 20px auto; /* Căn giữa */
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 { margin: 0 0 15px 0; font-size: 1.3rem; color: #333; }
+
+        /* Ô nhập liệu to, rõ */
+        #numInput {
+            width: 30%; 
+            height: 70px; 
+            font-size: 3rem; 
+            font-weight: bold; 
+            text-align: center; 
+            border: 4px solid #007bff; 
+            border-radius: 15px; 
+            outline: none; 
+            display: block; 
+            margin: 0 auto 20px auto;
             color: #007bff;
         }
 
-        /* 4. Kết quả 3 dòng */
-        .result-container {
-            text-align: left;
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
+        /* Kết quả 3 dòng */
+        .result-container { 
+            text-align: left; 
+            background: #f8f9fa; 
+            border-radius: 10px; 
+            padding: 15px; 
             margin-bottom: 20px;
+            border: 1px solid #eee;
         }
         .result-line { 
             display: flex; 
-            padding: 10px 0; 
-            border-bottom: 1px solid #eee;
-            font-size: 1.1rem;
+            padding: 8px 0; 
+            border-bottom: 1px dashed #ccc; 
+            font-size: 1.1rem; 
         }
-        .label { font-weight: bold; color: #555; width: 100px; flex-shrink: 0; }
-        .value { color: #000; font-weight: 500; }
+        .result-line:last-child { border-bottom: none; }
+        .label { font-weight: bold; color: #555; width: 95px; flex-shrink: 0; }
+        .value { color: #333; }
 
-        /* 5. Khu vực Copy */
-        .copy-status { font-size: 1rem; color: #666; }
-        #lastNum {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #28a745;
-            background: #e8f5e9;
-            padding: 5px 20px;
-            border-radius: 8px;
+        /* Ô Copy hiện số kèm chữ x */
+        .copy-box { 
+            font-size: 1rem; 
+            color: #666; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+        }
+        #lastNum { 
+            font-size: 2rem; 
+            font-weight: bold; 
+            color: #28a745; 
+            background: #e8f5e9; 
+            padding: 5px 20px; 
+            border-radius: 8px; 
+            border: 1px solid #c8e6c9;
         }
     </style>
 </head>
@@ -79,123 +81,32 @@
 <div class="card">
     <h2>Nhập 2 Số</h2>
     
-    <input type="text" id="numInput" maxlength="2" inputmode="numeric" autofocus autocomplete="off">
+    <input type="text" id="numInput" 
+           maxlength="2" 
+           inputmode="numeric" 
+           pattern="[0-9]*" 
+          
+           autofocus 
+           autocomplete="off">
     
     <div class="result-container">
-        <div class="result-line"><span class="label">Sản phẩm:</span> <span id="line1">---</span></div>
-        <div class="result-line"><span class="label">Đơn giá:</span> <span id="line2">---</span></div>
-        <div class="result-line"><span class="label">Vị trí:</span> <span id="line3">---</span></div>
+        <div class="result-line"><span class="label">Sản phẩm:</span> <span class="value" id="line1">---</span></div>
+        <div class="result-line"><span class="label">Đơn giá:</span> <span class="value" id="line2">---</span></div>
+        <div class="result-line"><span class="label">Ghi chú:</span> <span class="value" id="line3">---</span></div>
     </div>
 
-    <div class="copy-status">
-        Đã copy: <span id="lastNum">--</span>
+    <div class="copy-box">
+        <span>Đã copy:</span>
+        <span id="lastNum">--</span>
     </div>
 </div>
 
 <script>
-    // Dữ liệu mẫu
+    // Dữ liệu tra cứu (Chỉ dùng 2 số làm Key)
     const DATA_MAP = {
-        "01": { n: "Sản phẩm A", p: "10k" },
-        "01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-"01": { n: "Sản phẩm A", p: "10k" },
-        "02": { n: "Sản phẩm B", p: "20k"}
+        "00": { n: "Mặt hàng 00", p: "Miễn phí", g: "Kho tổng" },
+        "01": { n: "Mặt hàng 01", p: "50.000đ", g: "Kệ A1" },
+        "67": { n: "Mặt hàng 67", p: "120.000đ", g: "Kệ B3" }
     };
 
     const inputEl = document.getElementById('numInput');
@@ -205,32 +116,55 @@
     const lastNum = document.getElementById('lastNum');
 
     inputEl.addEventListener('input', function() {
+        // Chỉ cho phép nhập số vào ô nhập chính
         this.value = this.value.replace(/\D/g, '');
 
         if (this.value.length === 2) {
             const val = this.value;
-            const d = DATA_MAP[val];
+            const data = DATA_MAP[val];
 
-            if (d) {
-                l1.innerText = d.n; l2.innerText = d.p; l3.innerText = d.v;
+            // 1. Hiển thị kết quả 3 dòng
+            if (data) {
+                l1.innerText = data.n;
+                l2.innerText = data.p;
+                l3.innerText = data.g;
             } else {
-                l1.innerText = "Không thấy"; l2.innerText = "---"; l3.innerText = "---";
+                l1.innerText = "Không tìm thấy";
+                l2.innerText = "---";
+                l3.innerText = "---";
             }
 
-            lastNum.innerText = val;
-            
-            // Tự động copy
-            navigator.clipboard.writeText(val);
+            // 2. TẠO CHUỖI CÓ CHỮ X (Ví dụ: "00x")
+            const stringToCopy = val + "x";
 
-            // Tự động xóa để nhập tiếp
+            // 3. Hiển thị chuỗi kèm x lên ô copy màu xanh
+            lastNum.innerText = stringToCopy;
+
+            // 4. TỰ ĐỘNG COPY CHUỖI KÈM X VÀO BỘ NHỚ
+            copyToClipboard(stringToCopy);
+
+            // 5. Xóa ô nhập sau 150ms để gõ tiếp số mới
             setTimeout(() => {
                 this.value = '';
                 this.focus();
-            }, 200);
+            }, 150);
         }
     });
 
-    // Luôn giữ focus
+    function copyToClipboard(text) {
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text);
+        } else {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+        }
+    }
+
+    // Luôn giữ focus để nhập liên tục không cần chạm màn hình
     document.addEventListener('click', () => inputEl.focus());
 </script>
 
