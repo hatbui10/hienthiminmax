@@ -3,147 +3,158 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auto Copy</title>
+    <title>Giao Diện Thu Gọn - Dark Gradient</title>
     <style>
-        /* Tối ưu tràn viền, bỏ bớt khoảng trắng dư thừa */
-        html, body { margin: 0; padding: 0; width: 100%; background-color: #f0f2f5; display: flex; justify-content: center; }
-        
-        .card { 
-            background: white; 
-            width: 98%; /* Tràn gần hết màn hình điện thoại */
-            max-width: 450px; 
-            margin-top: 10px; 
-            padding: 20px 10px; 
-            border-radius: 12px; 
-            box-sizing: border-box; 
+        html, body {
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            display: flex; justify-content: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #14161a 0%, #243447 100%);
+            background-attachment: fixed;
+            color: #e0e0e0;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            width: 98%;
+            
+            margin-top: 10px;
+            padding: 5px; /* Giảm padding */
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-sizing: border-box;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            backdrop-filter: blur(8px);
         }
 
-        h2 { margin: 0 0 15px 0; font-size: 1.3rem; color: #333; }
+        h2 { margin: 0 0 15px 0; color: #fff; font-size: 1.2rem; font-weight: 500; letter-spacing: 1px; }
 
-        /* Ô nhập liệu to, rõ */
+        /* Ô nhập liệu: Đã thu nhỏ lại */
         #numInput {
-            width: 30%; 
-            height: 70px; 
-            font-size: 3rem; 
-            font-weight: bold; 
-            text-align: center; 
-            border: 4px solid #007bff; 
-            border-radius: 15px; 
-            outline: none; 
-            display: block; 
-            margin: 0 auto 20px auto;
-            color: #007bff;
+            width: 50%;
+            max-width: 160px;
+            height: 75px; /* Giảm từ 100px */
+            font-size: 3.2rem; /* Giảm cỡ chữ */
+            font-weight: bold;
+            text-align: center;
+            border: 3px solid #00d2ff;
+            border-radius: 12px;
+            outline: none;
+            display: block;
+            margin: 0 auto 15px auto;
+            background: rgba(0, 0, 0, 0.4);
+            color: #00d2ff;
+            box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
         }
 
-        /* Kết quả 3 dòng */
-        .result-container { 
-            text-align: left; 
-            background: #f8f9fa; 
-            border-radius: 10px; 
-            padding: 15px; 
-            margin-bottom: 20px;
-            border: 1px solid #eee;
+        /* Kết quả 4 dòng: Thu nhỏ khoảng cách */
+        .result-container {
+            text-align: left;
+            background: rgba(0, 0, 0, 0.25);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
         }
-        .result-line { 
-            display: flex; 
-            padding: 8px 0; 
-            border-bottom: 1px dashed #ccc; 
-            font-size: 1.1rem; 
+
+        .result-line {
+            display: flex;
+            padding: 7px 0; /* Giảm đệm dòng */
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 1rem; /* Giảm cỡ chữ xuống 1rem */
         }
         .result-line:last-child { border-bottom: none; }
-        .label { font-weight: bold; color: #555; width: 95px; flex-shrink: 0; }
-        .value { color: #333; }
 
-        /* Ô Copy hiện số kèm chữ x */
-        .copy-box { 
-            font-size: 1rem; 
-            color: #666; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            gap: 10px; 
-        }
-        #lastNum { 
-            font-size: 2rem; 
-            font-weight: bold; 
-            color: #28a745; 
-            background: #e8f5e9; 
-            padding: 5px 20px; 
-            border-radius: 8px; 
-            border: 1px solid #c8e6c9;
+        .label { font-weight: bold; color: #90a4ae; width: 100px; flex-shrink: 0; }
+        .value { color: #fff; }
+
+        /* Khu vực Copy thu gọn */
+        .copy-status { font-size: 0.9rem; color: #90a4ae; }
+        #lastNum {
+            font-size: 1.8rem; /* Thu nhỏ cỡ số copy */
+            font-weight: bold;
+            color: #1a1c20;
+            background: linear-gradient(135deg, #a8ff78 0%, #78ffd6 100%);
+            padding: 4px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 5px;
         }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h2>Nhập 2 Số</h2>
+    <h2>NHẬP SỐ</h2>
     
     <input type="text" id="numInput" 
            maxlength="2" 
            inputmode="numeric" 
-           pattern="[0-9]*" 
-          
+           placeholder="--" 
            autofocus 
            autocomplete="off">
     
     <div class="result-container">
-        <div class="result-line"><span class="label">Sản phẩm:</span> <span class="value" id="line1">---</span></div>
-        <div class="result-line"><span class="label">Đơn giá:</span> <span class="value" id="line2">---</span></div>
-        <div class="result-line"><span class="label">Ghi chú:</span> <span class="value" id="line3">---</span></div>
+        <div class="result-line"><span class="label">Dòng 1:</span> <span class="value" id="line1">---</span></div>
+        <div class="result-line"><span class="label">Dòng 2:</span> <span class="value" id="line2">---</span></div>
+        <div class="result-line"><span class="label">Dòng 3:</span> <span class="value" id="line3">---</span></div>
+        <div class="result-line"><span class="label">Dòng 4:</span> <span class="value" id="line4">---</span></div>
     </div>
 
     <div class="copy-box">
-        <span>Đã copy:</span>
-        <span id="lastNum">--</span>
+        <span class="copy-status">Đã copy:</span><br>
+        <span id="lastNum">--x</span>
     </div>
 </div>
 
 <script>
-    // Dữ liệu tra cứu (Chỉ dùng 2 số làm Key)
+    // Dữ liệu mẫu (Bạn tự thay d1-d4 theo ý mình)
     const DATA_MAP = {
-        "00": { n: "Mặt hàng 00", p: "Miễn phí", g: "Kho tổng" },
-        "01": { n: "Mặt hàng 01", p: "50.000đ", g: "Kệ A1" },
-        "67": { n: "Mặt hàng 67", p: "120.000đ", g: "Kệ B3" }
+        "00": { d1: "Lớn", d2: "Nhỏ", d3: "Bình thường", d4: "Ghi chú A" },
+        "01": { d1: "Sản phẩm A", d2: "10k", d3: "Kho 1", d4: "Sẵn hàng" },
+        "02": { d1: "Lớn", d2: "Nhỏ", d3: "Lớn", d4: "Lưu ý B" }
     };
 
     const inputEl = document.getElementById('numInput');
     const l1 = document.getElementById('line1');
     const l2 = document.getElementById('line2');
     const l3 = document.getElementById('line3');
+    const l4 = document.getElementById('line4');
     const lastNum = document.getElementById('lastNum');
 
     inputEl.addEventListener('input', function() {
-        // Chỉ cho phép nhập số vào ô nhập chính
         this.value = this.value.replace(/\D/g, '');
 
         if (this.value.length === 2) {
             const val = this.value;
             const data = DATA_MAP[val];
 
-            // 1. Hiển thị kết quả 3 dòng
             if (data) {
-                l1.innerText = data.n;
-                l2.innerText = data.p;
-                l3.innerText = data.g;
+                l1.innerText = data.d1 || "---";
+                l2.innerText = data.d2 || "---";
+                l3.innerText = data.d3 || "---";
+                l4.innerText = data.d4 || "---";
             } else {
                 l1.innerText = "Không tìm thấy";
-                l2.innerText = "---";
-                l3.innerText = "---";
+                l2.innerText = "---"; l3.innerText = "---"; l4.innerText = "---";
             }
 
-            // 2. TẠO CHUỖI CÓ CHỮ X (Ví dụ: "00x")
             const stringToCopy = val + "x";
-
-            // 3. Hiển thị chuỗi kèm x lên ô copy màu xanh
             lastNum.innerText = stringToCopy;
 
-            // 4. TỰ ĐỘNG COPY CHUỖI KÈM X VÀO BỘ NHỚ
-            copyToClipboard(stringToCopy);
+            // Xử lý Copy
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(stringToCopy);
+            } else {
+                const textArea = document.createElement("textarea");
+                textArea.value = stringToCopy;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+            }
 
-            // 5. Xóa ô nhập sau 150ms để gõ tiếp số mới
+            // Xóa nhanh để nhập tiếp (150ms)
             setTimeout(() => {
                 this.value = '';
                 this.focus();
@@ -151,20 +162,7 @@
         }
     });
 
-    function copyToClipboard(text) {
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(text);
-        } else {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-        }
-    }
-
-    // Luôn giữ focus để nhập liên tục không cần chạm màn hình
+    // Luôn giữ focus
     document.addEventListener('click', () => inputEl.focus());
 </script>
 
