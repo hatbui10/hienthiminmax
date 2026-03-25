@@ -5,41 +5,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tìm kiếm khối số</title>
     <style>
+        /* Reset căn bản để tránh tràn màn hình */
+        * { box-sizing: border-box; }
+
         html, body {
-            margin: 20px; padding: 0;
-            width: 100%; min-height: 100vh;
-            display: flex; justify-content: center;
-            font-family: 'Segoe UI', sans-serif;
-            align-items: flex-start; 
+            margin: 0; 
+            padding: 0;
+            width: 100%; 
+            min-height: 100vh;
+            display: flex; 
+            justify-content: center; /* Căn giữa ngang */
+            align-items: flex-start; /* Bắt đầu từ đỉnh trang */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: #0d0f13;
             color: #fff;
+            overflow-x: hidden;
         }
 
         .container {
-            width: 90%;
+            width: 95%;
             max-width: 500px;
-            margin: 20px;
-            text-align: center;
+            /* KHOẢNG CÁCH MÉP TRÊN 20PX TẠI ĐÂY */
+            margin-top: 20px; 
+            margin-bottom: 20px;
             display: flex;
-            justify-content: center;
-            align-items: flex-start; 
+            flex-direction: column; /* Xếp các phần tử theo hàng dọc */
+            align-items: stretch; /* Giãn các phần tử con theo chiều rộng */
         }
 
         /* Vùng tải file */
         .file-upload {
             background: #1c1f26;
-            padding: 12px;
+            padding: 15px;
             border-radius: 10px;
             border: 1px dashed #444;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
+            text-align: center;
         }
-        input[type="file"] { font-size: 0.75rem; color: #888; }
+        
+        input[type="file"] { 
+            font-size: 0.8rem; 
+            color: #888; 
+            width: 100%;
+        }
 
         /* Ô nhập số */
         #numInput {
-            width: 85%;
-            height: 90px;
-            font-size: 4rem;
+            width: 100%;
+            height: 100px;
+            font-size: 4.5rem;
             font-weight: bold;
             text-align: center;
             border: 3px solid #00d2ff;
@@ -49,25 +63,28 @@
             outline: none;
             margin-bottom: 20px;
             box-shadow: 0 0 25px rgba(0, 210, 255, 0.2);
+            transition: transform 0.2s;
         }
+        #numInput:focus { transform: scale(1.02); }
 
         /* Khu vực kết quả */
         #resultArea {
-            text-align: center;
             background: #1c1f26;
             border-radius: 12px;
             padding: 5px 15px;
             display: none;
             border: 1px solid #333;
-            max-height: 400px;
+            max-height: 350px;
             overflow-y: auto;
+            margin-bottom: 15px;
         }
 
         .result-item {
             padding: 12px 0;
             border-bottom: 1px solid #2d323a;
             font-family: 'Consolas', monospace;
-            font-size: 1.15rem;
+            font-size: 1.2rem;
+            text-align: center;
         }
         .result-item:last-child { border-bottom: none; }
 
@@ -75,11 +92,11 @@
 
         .status-bar { 
             background: #252a33;
-            padding: 8px;
+            padding: 12px;
             border-radius: 8px;
-            font-size: 0.85rem;
-            margin-top: 10px;
+            font-size: 0.9rem;
             color: #00ff88;
+            text-align: center;
         }
     </style>
 </head>
@@ -87,7 +104,7 @@
 
 <div class="container">
     <div class="file-upload">
-        <div style="margin-bottom: 8px; font-size: 0.8rem; color: #aaa;">Tải tệp mới để cập nhật dữ liệu:</div>
+        <div style="margin-bottom: 10px; font-size: 0.85rem; color: #aaa;">Tải tệp .txt để nạp dữ liệu:</div>
         <input type="file" id="fileInput" accept=".txt">
     </div>
 
@@ -95,32 +112,32 @@
     
     <div id="resultArea"></div>
 
-    <div class="status-bar" id="statusMsg">Đang kiểm tra dữ liệu cũ...</div>
+    <div class="status-bar" id="statusMsg">Đang kiểm tra bộ nhớ...</div>
 </div>
 
 <script>
     let allLines = [];
-    const STORAGE_KEY = 'my_txt_data'; // Khóa để lưu vào trình duyệt
+    const STORAGE_KEY = 'my_txt_data';
 
     const fileInput = document.getElementById('fileInput');
     const numInput = document.getElementById('numInput');
     const resultArea = document.getElementById('resultArea');
     const statusMsg = document.getElementById('statusMsg');
 
-    // 1. Hàm khởi tạo: Kiểm tra xem LocalStorage có dữ liệu cũ không
+    // Tự động nạp dữ liệu cũ từ LocalStorage
     window.onload = function() {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
             allLines = JSON.parse(savedData);
-            statusMsg.innerText = "Sẵn sàng! (Đã nạp " + allLines.length + " dòng từ bộ nhớ)";
+            statusMsg.innerText = `Sẵn sàng! Đã nạp ${allLines.length} dòng.`;
         } else {
-            statusMsg.innerText = "Chưa có dữ liệu. Vui lòng tải tệp .txt";
+            statusMsg.innerText = "Chưa có dữ liệu. Vui lòng tải tệp!";
             statusMsg.style.color = "#ff4757";
         }
         numInput.focus();
     };
 
-    // 2. Xử lý khi người dùng chọn Tệp mới (Cập nhật dữ liệu)
+    // Xử lý nạp File mới
     fileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -128,33 +145,28 @@
         const reader = new FileReader();
         reader.onload = function(e) {
             const content = e.target.result;
-            // Xử lý nội dung file thành mảng các dòng
             allLines = content.split(/\r?\n/).filter(line => line.trim() !== "");
-            
-            // Lưu mảng này vào LocalStorage dưới dạng chuỗi JSON
             localStorage.setItem(STORAGE_KEY, JSON.stringify(allLines));
             
-            alert("Đã cập nhật dữ liệu mới!");
-            statusMsg.innerText = "Đã cập nhật " + allLines.length + " dòng mới.";
+            statusMsg.innerText = `Đã cập nhật ${allLines.length} dòng mới.`;
             statusMsg.style.color = "#00ff88";
             numInput.focus();
         };
         reader.readAsText(file);
     });
 
-    // 3. Xử lý khi nhập 2 số
+    // Xử lý tìm kiếm khi nhập đủ 2 số
     numInput.addEventListener('input', function() {
         this.value = this.value.replace(/\D/g, '');
         const searchVal = this.value;
 
         if (searchVal.length === 2) {
             if (allLines.length === 0) {
-                alert("Dữ liệu trống! Hãy tải tệp .txt");
+                statusMsg.innerText = "Lỗi: Không có dữ liệu!";
                 this.value = "";
                 return;
             }
 
-            // Quét tìm dòng khớp
             const matches = allLines.filter(line => line.trim().startsWith(searchVal));
 
             if (matches.length > 0) {
@@ -164,19 +176,16 @@
                 matches.forEach(line => {
                     const div = document.createElement('div');
                     div.className = 'result-item';
-                    
-                    // Tách 2 số đầu để tô màu
                     const prefix = line.substring(0, 2);
                     const rest = line.substring(2);
                     div.innerHTML = `<span class="highlight">${prefix}</span>${rest}`;
-                    
                     resultArea.appendChild(div);
                 });
 
-                // Tự động Copy số đó + "x"
+                // Tự động Copy
                 const copyText = searchVal + "x";
                 navigator.clipboard.writeText(copyText).then(() => {
-                    statusMsg.innerHTML = `Đã tìm thấy ${matches.length} dòng. <b>Copy: ${copyText}</b>`;
+                    statusMsg.innerHTML = `Tìm thấy ${matches.length} dòng. <b>Đã Copy: ${copyText}</b>`;
                 });
 
             } else {
@@ -184,7 +193,7 @@
                 statusMsg.innerText = "Không tìm thấy khối: " + searchVal;
             }
 
-            // Xóa ô nhập sau 800ms để nhập lượt mới
+            // Xóa ô nhập sau 800ms để nhập tiếp
             setTimeout(() => {
                 this.value = "";
                 this.focus();
@@ -192,7 +201,7 @@
         }
     });
 
-    // Luôn focus
+    // Luôn giữ focus vào ô nhập
     document.addEventListener('click', (e) => {
         if (e.target !== fileInput) numInput.focus();
     });
