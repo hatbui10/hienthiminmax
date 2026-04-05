@@ -68,17 +68,21 @@
 
         .input-item { text-align: center; }
 
-        input[type="text"] {
-            background: #000;
-            border: 2px solid var(--border);
-            color: var(--accent);
-            font-size: 2.5rem;
-            width: 120px;
-            text-align: center;
-            border-radius: 10px;
-            outline: none;
-            display: block;
-        }
+        input[type="text"], input[type="tel"] {
+    background: #000;
+    border: 2px solid var(--border);
+    color: var(--accent);
+    font-size: 2.5rem;
+    width: 120px;
+    text-align: center;
+    border-radius: 10px;
+    outline: none;
+    display: block;
+    /* Đảm bảo chiều cao đồng nhất trên điện thoại */
+    height: 70px; 
+    line-height: 70px;
+}
+
 
         #abInput:focus { border-color: var(--accent); }
         #copyDisplay { color: #ffeb3b; border-color: #444; } /* Ô copy có màu khác để phân biệt */
